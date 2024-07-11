@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 @AllArgsConstructor
@@ -21,7 +20,7 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private UUID id;
+    private Long id;
     @Column(name = "name",nullable = false,length = 50)
     private String name;
     @Column(name = "email",nullable = false,unique = true,length = 80)
@@ -29,20 +28,16 @@ public class User implements Serializable {
     @Column(name = "senha",nullable = false,length = 250)
     private String senha;
 
-
-
-
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(email, user.email);
+        return Objects.equals(id, user.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email);
+        return Objects.hashCode(id);
     }
 }
