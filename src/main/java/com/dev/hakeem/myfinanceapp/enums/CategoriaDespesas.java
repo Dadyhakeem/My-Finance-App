@@ -1,6 +1,4 @@
-package com.dev.hakeem.MyFinanceApp.enums;
-
-import java.util.UUID;
+package com.dev.hakeem.myfinanceapp.enums;
 
 public enum CategoriaDespesas {
 

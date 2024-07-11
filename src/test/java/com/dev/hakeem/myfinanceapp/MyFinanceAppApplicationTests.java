@@ -1,4 +1,4 @@
-package com.dev.hakeem.MyFinanceApp;
+package com.dev.hakeem.myfinanceapp;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

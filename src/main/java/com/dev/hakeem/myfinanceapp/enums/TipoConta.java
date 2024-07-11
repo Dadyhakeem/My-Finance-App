@@ -1,4 +1,4 @@
-package com.dev.hakeem.MyFinanceApp.enums;
+package com.dev.hakeem.myfinanceapp.enums;
 
 public enum TipoConta {
 

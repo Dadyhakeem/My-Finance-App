@@ -1,4 +1,4 @@
-package com.dev.hakeem.MyFinanceApp;
+package com.dev.hakeem.myfinanceapp;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
