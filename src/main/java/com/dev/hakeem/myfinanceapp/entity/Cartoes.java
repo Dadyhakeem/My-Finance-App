@@ -23,10 +23,10 @@ public class Cartoes {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "conta",nullable = false)
-    private TipoConta tipoConta;
+    private Conta conta;
 
     @Column(name = "limit",nullable = false,scale = 2)
-    private BigDecimal limit;
+    private double limit;
 
     @Column(name = "fechamento",nullable = false)
     private LocalDate fechamento;
@@ -36,7 +36,7 @@ public class Cartoes {
 
     @ManyToOne
     @JoinColumn(name = "conta_id")
-    private Conta conta;
+    private Conta conta_id;
 
 
     @Override
