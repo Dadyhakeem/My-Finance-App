@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Service
 public class CartaoService {
     @Autowired
@@ -141,11 +143,14 @@ public class CartaoService {
 
 
 
-    public List<Cartoes>findByAll(){
-        return repository.findAll();
+    public List<CartaoDTO> findByAll() {
+        return repository.findAll().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
-    public Optional<Cartoes> findById(Long id){
-        return repository.findById(id);
+    public Optional<CartaoDTO> findById(Long id) {
+        return repository.findById(id)
+                .map(this::mapToDTO);
     }
 }

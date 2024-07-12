@@ -35,7 +35,7 @@ public class Conta implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private  User user_id;
+    private  User user;
 
 
     @Override
