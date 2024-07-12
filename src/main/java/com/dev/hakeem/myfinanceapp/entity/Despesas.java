@@ -26,7 +26,7 @@ public class Despesas {
     private  String descriao;
 
     @Column(name = "valor",nullable = false,scale = 2)
-    private BigDecimal valor;
+    private double valor;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "conta")
@@ -42,6 +42,8 @@ public class Despesas {
     @Enumerated(EnumType.STRING)
     @JoinColumn(name = "conta_id")
     private Conta conta_id;
+
+
 
     @Override
     public boolean equals(Object o) {
