@@ -4,19 +4,22 @@ import com.dev.hakeem.myfinanceapp.dto.DespesaDTO;
 import com.dev.hakeem.myfinanceapp.dto.ReceitaDTO;
 import com.dev.hakeem.myfinanceapp.entity.Receitas;
 import com.dev.hakeem.myfinanceapp.repository.ReceitaRepository;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Optional;
-
+@Service
 public class ReceitaService {
-
+    @Autowired
     private final ReceitaRepository repository;
 
     public ReceitaService(ReceitaRepository repository) {
         this.repository = repository;
     }
 
-    public Receitas adicionarReceita(ReceitaDTO receitaDTO){
+    public Receitas adicionarReceita(@Valid ReceitaDTO receitaDTO){
         validarReceitaDTO(receitaDTO);
         Receitas receitas = new Receitas();
         receitas.setData_receita(receitaDTO.getData_receita());
@@ -43,7 +46,7 @@ public class ReceitaService {
                 repository.delete(receitas.get());
     }
 
-    public  Receitas autualizarReceito(ReceitaDTO receitaDTO){
+    public  Receitas autualizarReceito(@Valid ReceitaDTO receitaDTO){
         Receitas receitas = repository.findById(receitaDTO.getId())
                 .orElseThrow(()-> new RuntimeException("Reeita nao encontrada"));
 

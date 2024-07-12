@@ -3,6 +3,7 @@ package com.dev.hakeem.myfinanceapp.service;
 import com.dev.hakeem.myfinanceapp.dto.UserDTO;
 import com.dev.hakeem.myfinanceapp.entity.User;
 import com.dev.hakeem.myfinanceapp.repository.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ public class UserService {
      * @return O usuário criado e persistido
      */
 
-    public User createUser(UserDTO userDTO){
+    public User createUser(@Valid UserDTO userDTO){
         User user = new User();
         user.setName(userDTO.getName());
         user.setEmail(userDTO.getEmail());
@@ -86,7 +87,7 @@ public class UserService {
      * @return O usuário criado e persistido
      */
 
-    public  User cadastrar(UserDTO userDTO){
+    public  User cadastrar(@Valid UserDTO userDTO){
         User user = new User();
         user.setName(userDTO.getName());
         user.setEmail(userDTO.getEmail());

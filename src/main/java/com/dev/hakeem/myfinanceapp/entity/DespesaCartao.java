@@ -22,6 +22,8 @@ public class DespesaCartao implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private  Long id ;
+    @Column(name = "valor",nullable = false,scale = 2)
+    private double valor;
 
     @Column(name = "data",nullable = false)
     private LocalDate data;
@@ -43,7 +45,7 @@ public class DespesaCartao implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "despesa_id")
-    private  Despesas despesas;
+    private  Despesas despesas_id;
 
 
     @Override

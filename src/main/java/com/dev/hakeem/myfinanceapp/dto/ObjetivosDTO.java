@@ -1,5 +1,7 @@
 package com.dev.hakeem.myfinanceapp.dto;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,12 +23,13 @@ public class ObjetivosDTO {
     private String descricao;
 
     @NotNull
+    @PastOrPresent(message = "A data deve ser o passado ou no presente")
     private LocalDate data_alvo;
 
-    @NotNull
+    @NotBlank(message = "Nao deve ser nula")
     private double meta;
 
-    @NotNull
+
     private double valor_inicial;
     private  Long user_id;
 }

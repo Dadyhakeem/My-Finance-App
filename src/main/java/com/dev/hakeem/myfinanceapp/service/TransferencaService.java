@@ -4,12 +4,15 @@ import com.dev.hakeem.myfinanceapp.dto.TransferenciaDTO;
 import com.dev.hakeem.myfinanceapp.entity.Conta;
 import com.dev.hakeem.myfinanceapp.repository.ContaRepository;
 import com.dev.hakeem.myfinanceapp.repository.TranferencaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-
+@Service
 public class TransferencaService {
-
+    @Autowired
     private  final TranferencaRepository repository;
+    @Autowired
     private final ContaRepository contaRepository;
 
     public TransferencaService(TranferencaRepository repository, ContaRepository contaRepository) {

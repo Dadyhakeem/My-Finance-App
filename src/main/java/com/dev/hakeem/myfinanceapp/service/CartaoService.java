@@ -8,14 +8,18 @@ import com.dev.hakeem.myfinanceapp.entity.Despesas;
 import com.dev.hakeem.myfinanceapp.repository.CartaoRepository;
 import com.dev.hakeem.myfinanceapp.repository.ContaRepository;
 import com.dev.hakeem.myfinanceapp.repository.DespesaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
+@Service
 public class CartaoService {
-
+    @Autowired
     private  final CartaoRepository repository;
+    @Autowired
     private  final ContaRepository contaRepository;
+    @Autowired
     private  final DespesaRepository despesaRepository;
 
     public CartaoService(CartaoRepository repository, ContaRepository contaRepository, DespesaRepository despesaRepository) {

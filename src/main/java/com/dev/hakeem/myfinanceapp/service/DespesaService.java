@@ -3,6 +3,8 @@ package com.dev.hakeem.myfinanceapp.service;
 import com.dev.hakeem.myfinanceapp.dto.DespesaDTO;
 import com.dev.hakeem.myfinanceapp.entity.Despesas;
 import com.dev.hakeem.myfinanceapp.repository.DespesaRepository;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -10,7 +12,7 @@ import java.util.Optional;
 
 @Service
 public class DespesaService {
-
+    @Autowired
     private final DespesaRepository repository;
 
     public DespesaService(DespesaRepository repository) {
@@ -24,7 +26,7 @@ public class DespesaService {
      * @throws IllegalArgumentException se os dados da despesa forem inválidos
      */
 
-    public Despesas adicionarDespesas( DespesaDTO despesaDTO){
+    public Despesas adicionarDespesas( @Valid DespesaDTO despesaDTO){
         validarDespesaDTO(despesaDTO);
         Despesas despesas = new Despesas();
 

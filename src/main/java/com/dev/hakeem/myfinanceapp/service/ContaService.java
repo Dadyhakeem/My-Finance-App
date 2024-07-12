@@ -3,6 +3,7 @@ package com.dev.hakeem.myfinanceapp.service;
 import com.dev.hakeem.myfinanceapp.dto.ContaRequestDTO;
 import com.dev.hakeem.myfinanceapp.entity.Conta;
 import com.dev.hakeem.myfinanceapp.repository.ContaRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,7 +29,7 @@ public class ContaService {
      * @throws IllegalArgumentException Se os dados fornecidos forem inválidos
      */
 
-    public  Conta createConta(ContaRequestDTO requestDTO){
+    public  Conta createConta(@Valid ContaRequestDTO requestDTO){
         // validaçao dos dados do DTO
         if (requestDTO.getTipoConta() == null){
             throw new IllegalArgumentException("Tipo de conta não pode ser nulo");
