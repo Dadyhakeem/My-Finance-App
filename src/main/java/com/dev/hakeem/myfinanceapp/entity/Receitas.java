@@ -9,9 +9,9 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 import java.util.Objects;
-import java.util.UUID;
+
 
 @AllArgsConstructor @NoArgsConstructor
 @Getter @Setter
@@ -26,7 +26,7 @@ public class Receitas {
     @Column(name = "descricao")
     private  String descricao;
     @Column(name = "valor",nullable = false,scale = 2)
-    private BigDecimal valor;
+    private double valor;
     @Column(name = "categoria")
     private CategoriaReceitas categoriaReceitas;
     @Enumerated(EnumType.STRING)
