@@ -1,11 +1,18 @@
 package com.dev.hakeem.myfinanceapp.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
-
+@AllArgsConstructor @NoArgsConstructor
+@Getter @Setter
+@Entity
+@Table(name = "tb_transferencias")
 public class Transferenca {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,7 +20,7 @@ public class Transferenca {
     private  Long id;
 
     @Column(name = "valor",nullable = false,scale = 2)
-    private BigDecimal valor;
+    private double  valor;
 
     @Column(name = "data")
     private LocalDate data;
@@ -28,7 +35,7 @@ public class Transferenca {
 
     @ManyToOne
     @JoinColumn(name = "conta_id")
-    private  Conta conta;
+    private Long contaId;
 
 
     @Override
