@@ -15,7 +15,7 @@ public class CartaoDTO {
 
     private LocalDate vencimento;
     private  LocalDate fechamento;
-    private  double limit;
+    private  double limite;
     private Conta conta;
     private Long id;
     private Long conta_id;

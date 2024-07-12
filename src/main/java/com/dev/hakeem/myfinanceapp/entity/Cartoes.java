@@ -25,8 +25,8 @@ public class Cartoes {
     @Column(name = "conta",nullable = false)
     private Conta conta;
 
-    @Column(name = "limit",nullable = false,scale = 2)
-    private double limit;
+    @Column(name = "Credit_limit",nullable = false,scale = 2)
+    private double limite;
 
     @Column(name = "fechamento",nullable = false)
     private LocalDate fechamento;

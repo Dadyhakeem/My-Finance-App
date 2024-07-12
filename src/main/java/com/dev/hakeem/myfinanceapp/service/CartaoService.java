@@ -41,7 +41,7 @@ public class CartaoService {
                         .orElseThrow(() -> new RuntimeException("Conta nao encontrada"));
 
         cartao.setConta(cartaoDTO.getConta());
-        cartao.setLimit(cartaoDTO.getLimit());
+        cartao.setLimite(cartaoDTO.getLimite());
         cartao.setFechamento(cartaoDTO.getFechamento());
         cartao.setVencimento(cartaoDTO.getVencimento());
 
@@ -68,7 +68,7 @@ public class CartaoService {
 
 
 
-          cartoes.setLimit(cartaoDTO.getLimit());
+          cartoes.setLimite(cartaoDTO.getLimite());
           cartoes.setFechamento(cartaoDTO.getFechamento());
           cartoes.setVencimento(cartaoDTO.getVencimento());
           Cartoes updateCartao = repository.save(cartoes);
@@ -115,7 +115,7 @@ public class CartaoService {
 
         cartaoDTO.setId(cartoes.getId());
         cartaoDTO.setConta_id(cartoes.getConta().getId());
-        cartaoDTO.setLimit(cartoes.getLimit());
+        cartaoDTO.setLimite(cartoes.getLimite());
         cartaoDTO.setFechamento(cartoes.getFechamento());
         cartaoDTO.setVencimento(cartoes.getVencimento());
         return  cartaoDTO;

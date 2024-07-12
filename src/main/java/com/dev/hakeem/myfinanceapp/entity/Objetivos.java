@@ -26,11 +26,11 @@ public class Objetivos {
     @Column(name =  "descricao")
     private String descricao;
     @Column(name = "data_alvo",nullable = false,length = 150)
-    private LocalDateTime data_alvo;
+    private LocalDate data_alvo;
     @Column(name = "meta", nullable = false,scale = 2)
-    private BigDecimal meta;
+    private double meta;
     @Column(name = "valor_inicial",scale = 2)
-    private  BigDecimal valor_inicial;
+    private  double valor_inicial;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private  User user;
