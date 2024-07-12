@@ -12,6 +12,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserDTO {
+    private  Long id;
     @NotBlank
     private  String name;
     @NotBlank
