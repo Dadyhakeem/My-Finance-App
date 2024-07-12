@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.io.Serializable;
 import java.util.Objects;
 
 
@@ -14,7 +16,8 @@ import java.util.Objects;
 @NoArgsConstructor @Getter @Setter
 @Entity
 @Table(name = "tb_conta")
-public class Conta {
+public class Conta implements Serializable {
+    private static final long serialVersionUID= 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -14,7 +15,8 @@ import java.util.Objects;
 @Getter @Setter
 @Entity
 @Table(name = "despesa_cartoes")
-public class DespesaCartao {
+public class DespesaCartao implements Serializable {
+    private static final long serialVersionUID= 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +33,7 @@ public class DespesaCartao {
     @Column(name = "categoria",nullable = false)
     private CategoriaDespesas categoriaDespesas;
 
-    @Enumerated(EnumType.STRING)
+
     @Column(name = "cartao",nullable = false)
     private  Cartoes cartoes;
 

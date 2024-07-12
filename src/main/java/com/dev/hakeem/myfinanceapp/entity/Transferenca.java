@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -13,7 +14,8 @@ import java.util.Objects;
 @Getter @Setter
 @Entity
 @Table(name = "tb_transferencias")
-public class Transferenca {
+public class Transferenca implements Serializable {
+    private static final long serialVersionUID= 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -25,17 +27,17 @@ public class Transferenca {
     @Column(name = "data")
     private LocalDate data;
 
-    @Enumerated(EnumType.STRING)
+
     @Column(name = "conta_origem")
     private Conta origem;
 
-    @Enumerated(EnumType.STRING)
+
     @Column(name = "conta_destino")
     private  Conta destino;
 
     @ManyToOne
-    @JoinColumn(name = "conta_id")
-    private Long contaId;
+    @JoinColumn(name = "conta_id",referencedColumnName = "id")
+    private Conta contaId;
 
 
     @Override

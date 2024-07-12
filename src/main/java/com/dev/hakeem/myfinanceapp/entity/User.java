@@ -15,6 +15,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "tb_users")
 public class User implements Serializable {
+    private static final long serialVersionUID= 1L;
 
 
     @Id

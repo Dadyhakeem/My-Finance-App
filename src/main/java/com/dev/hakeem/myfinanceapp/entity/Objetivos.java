@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,7 +18,8 @@ import java.util.UUID;
 @Getter @Setter
 @Entity
 @Table(name = "tb_objetivos")
-public class Objetivos {
+public class Objetivos implements Serializable {
+    private static final long serialVersionUID= 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

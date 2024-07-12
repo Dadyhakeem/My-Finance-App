@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
@@ -15,13 +16,14 @@ import java.util.Objects;
 @Getter @Setter
 @Entity
 @Table(name = "tb_cartoes")
-public class Cartoes {
+public class Cartoes implements Serializable {
+    private static final long serialVersionUID= 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private  Long id;
 
-    @Enumerated(EnumType.STRING)
+
     @Column(name = "conta",nullable = false)
     private Conta conta;
 
