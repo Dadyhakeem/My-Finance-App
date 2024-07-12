@@ -3,6 +3,7 @@ package com.dev.hakeem.myfinanceapp.service;
 import com.dev.hakeem.myfinanceapp.dto.UserDTO;
 import com.dev.hakeem.myfinanceapp.entity.User;
 import com.dev.hakeem.myfinanceapp.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-
+    @Autowired
     private final UserRepository repository;
 
 
