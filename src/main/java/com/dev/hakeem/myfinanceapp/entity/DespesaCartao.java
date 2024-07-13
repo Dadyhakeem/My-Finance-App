@@ -35,13 +35,13 @@ public class DespesaCartao implements Serializable {
     @Column(name = "categoria",nullable = false)
     private CategoriaDespesas categoriaDespesas;
 
-
-    @Column(name = "cartao",nullable = false)
+     @ManyToOne
+    @JoinColumn(name = "cartao",nullable = false)
     private  Cartoes cartoes;
 
     @ManyToOne
     @JoinColumn(name = "cartao_id")
-    private Cartoes cartoes_id;
+    private Cartoes cartaoId;
 
     @ManyToOne
     @JoinColumn(name = "despesa_id")
