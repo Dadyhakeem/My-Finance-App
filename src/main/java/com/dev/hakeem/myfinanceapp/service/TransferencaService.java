@@ -3,6 +3,7 @@ package com.dev.hakeem.myfinanceapp.service;
 
 import com.dev.hakeem.myfinanceapp.dto.TransferenciaDTO;
 import com.dev.hakeem.myfinanceapp.entity.Conta;
+import com.dev.hakeem.myfinanceapp.entity.Transferenca;
 import com.dev.hakeem.myfinanceapp.repository.ContaRepository;
 import com.dev.hakeem.myfinanceapp.repository.TranferencaRepository;
 import com.dev.hakeem.myfinanceapp.repository.TranferencaRepository;
@@ -92,6 +93,16 @@ public class TransferencaService {
     private void creditar(Conta destino, double valor) {
         // Credita o valor na conta de destino
         destino.setSaldoInicial(destino.getSaldoInicial() + valor);
+    }
+
+    public Transferenca obterTransferenciaPorId(Long id) {
+        return repository.findById(id)
+                .orElseThrow(()->new IllegalArgumentException("Transferência não encontrada."));
+    }
+
+    public void excluirTransferencia(Long id) {
+        Transferenca transferenca = repository.findById(id).orElseThrow(() -> new IllegalArgumentException("Transferência não encontrada."));
+        repository.delete(transferenca);
     }
 }
 
