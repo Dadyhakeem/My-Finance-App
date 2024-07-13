@@ -23,4 +23,5 @@ public class ContaRequestDTO {
     @NotNull(message = "nao deve ser nula")
     private String instituicaoFinanceira;
     private double saldoInicial;
+    private  double valor;
 }
