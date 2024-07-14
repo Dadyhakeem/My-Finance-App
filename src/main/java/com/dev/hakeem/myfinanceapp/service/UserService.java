@@ -1,11 +1,12 @@
 package com.dev.hakeem.myfinanceapp.service;
 
-import com.dev.hakeem.myfinanceapp.dto.UserDTO;
+import com.dev.hakeem.myfinanceapp.dto.userdto.CreateUserDTO;
+import com.dev.hakeem.myfinanceapp.dto.userdto.UpdateUserDTO;
 import com.dev.hakeem.myfinanceapp.entity.User;
 import com.dev.hakeem.myfinanceapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,76 +18,45 @@ public class UserService {
     @Autowired
     private UserRepository repository;
 
-    // Método auxiliar para mapear User para UserDTO
-    public UserDTO mapToDTO(User user) {
-        UserDTO userDTO = new UserDTO();
+    // Método auxiliar para mapear User para CreateUserDTO
+    @Transactional
+    public CreateUserDTO mapToDTO(User user) {
+        CreateUserDTO userDTO = new CreateUserDTO();
         userDTO.setId(user.getId());
         userDTO.setName(user.getName());
         userDTO.setEmail(user.getEmail());
+        userDTO.setRole(user.getRole());
         return userDTO;
     }
 
-    /**
-     * Busca um usuário pelo ID.
-     *
-     * @param id ID do usuário a ser buscado
-     * @return Optional contendo o usuário encontrado, ou Optional vazio se não encontrado
-     */
     public Optional<User> findById(Long id) {
         return repository.findById(id);
     }
 
-    /**
-     * Lista todos os usuários cadastrados.
-     *
-     * @return Lista de todos os usuários
-     */
-    public List<UserDTO> findAll() {
-        return repository.findAll().stream()   // Obtém todos os usuários como uma stream
-                .map(this::mapToDTO)           // Mapeia cada User para UserDTO
-                .collect(Collectors.toList()); // Coleta os resultados em uma lista
+    public List<CreateUserDTO> findAll() {
+        return repository.findAll().stream()
+                .map(this::mapToDTO)
+                .collect(Collectors.toList());
     }
 
-    /**
-     * Remove um usuário pelo ID.
-     *
-     * @param id ID do usuário a ser removido
-     */
     public void deleteUser(Long id) {
         repository.deleteById(id);
     }
 
-    /**
-     * Verifica se um usuário existe pelo ID.
-     *
-     * @param id ID do usuário a ser verificado
-     * @return true se o usuário existe, false caso contrário
-     */
     public boolean existsUser(Long id) {
         return repository.existsById(id);
     }
-
-    /**
-     * Cadastra um novo usuário com base nos dados fornecidos no DTO.
-     *
-     * @param userDTO Dados do usuário a serem cadastrados
-     * @return O usuário criado e persistido
-     */
-    public User cadastrar( UserDTO userDTO) {
+    @Transactional
+    public User cadastrar(CreateUserDTO createUserDTO) {
         User user = new User();
-        user.setName(userDTO.getName());
-        user.setEmail(userDTO.getEmail());
-        user.setSenha(userDTO.getSenha()); // Codifica a senha antes de salvar
+        user.setName(createUserDTO.getName());
+        user.setEmail(createUserDTO.getEmail());
+        user.setSenha(createUserDTO.getSenha());
+        user.setRole(createUserDTO.getRole());
+        // Não é necessário setar address e dateOfBirth, pois não estão na entidade User
         return repository.save(user);
     }
-
-    /**
-     * Realiza o login do usuário com base no e-mail e senha fornecidos.
-     *
-     * @param email E-mail do usuário
-     * @param senha Senha do usuário
-     * @return Optional contendo o usuário logado, ou Optional vazio se as credenciais estiverem incorretas
-     */
+    @Transactional
     public Optional<User> login(String email, String senha) {
         Optional<User> obj = repository.findByEmail(email);
         if (obj.isPresent()) {
@@ -96,5 +66,36 @@ public class UserService {
             // }
         }
         return Optional.empty();
+    }
+
+    /**
+     * Atualiza a senha de um usuário.
+     *
+     * @param id             ID do usuário cuja senha será atualizada
+     * @param updateUserDTO  DTO contendo a senha atual, nova senha e confirmação de senha
+     * @throws RuntimeException se o usuário não for encontrado
+     * @throws IllegalArgumentException se a senha atual estiver incorreta ou a nova senha não corresponder à confirmação
+     */
+    @Transactional
+    public void atualizarSenha(Long id, UpdateUserDTO updateUserDTO) {
+        Optional<User> obj = repository.findById(id);
+        if (obj.isEmpty()) {
+            throw new RuntimeException("Usuário não encontrado");
+        }
+
+        User user = obj.get();
+
+        // Verifica se a senha atual está correta
+        if (!user.getSenha().equals(updateUserDTO.getSenha())) {
+            throw new IllegalArgumentException("Senha atual incorreta.");
+        }
+
+        // Verifica se a nova senha e a confirmação correspondem
+        if (!updateUserDTO.getSenhaNova().equals(updateUserDTO.getConfirmasenha())) {
+            throw new IllegalArgumentException("Nova senha e confirmação não correspondem.");
+        }
+
+        user.setSenha(updateUserDTO.getSenhaNova());
+        repository.save(user);
     }
 }

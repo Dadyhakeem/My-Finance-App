@@ -1,6 +1,9 @@
 package com.dev.hakeem.myfinanceapp.entity;
 
+import com.dev.hakeem.myfinanceapp.enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +30,19 @@ public class User implements Serializable {
     @Column(name = "email",nullable = false,unique = true,length = 80)
     private String email;
     @Column(name = "senha",nullable = false,length = 250)
+    @NotBlank
+    @Size(min = 6,max = 6)
     private String senha;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role",nullable = false,length = 23)
+    private Role role;
+
+
+
+
+
+
 
     @Override
     public boolean equals(Object o) {
@@ -40,5 +55,12 @@ public class User implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                '}';
     }
 }
