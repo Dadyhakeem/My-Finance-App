@@ -2,9 +2,13 @@ package com.dev.hakeem.myfinanceapp.web.controller;
 
 import com.dev.hakeem.myfinanceapp.dto.ContaRequestDTO;
 import com.dev.hakeem.myfinanceapp.dto.TransferenciaDTO;
+import com.dev.hakeem.myfinanceapp.dto.contadto.DepositoRequestDTO;
+import com.dev.hakeem.myfinanceapp.dto.contadto.SaqueRequestDTO;
+import com.dev.hakeem.myfinanceapp.dto.contadto.TransferenciaRequestDTO;
 import com.dev.hakeem.myfinanceapp.entity.Conta;
 import com.dev.hakeem.myfinanceapp.service.ContaService;
 import com.dev.hakeem.myfinanceapp.service.TransferencaService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +36,7 @@ public class ContaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(novaConta);
     }
     @PostMapping("/depositar")
-    public  ResponseEntity<Conta> deposito(@RequestBody @Validated ContaRequestDTO requestDTO){
+    public  ResponseEntity<Conta> deposito(@RequestBody @Validated DepositoRequestDTO requestDTO){
         Conta obj = service.depositar(requestDTO);
         return ResponseEntity.ok(obj);
     }
@@ -40,21 +44,22 @@ public class ContaController {
     /**
      * Endpoint para realizar um saque em uma conta existente.
      *
-     * @param id    ID da conta da qual o saque será realizado
-     * @param valor Valor a ser sacado
+     *    ID da conta da qual o saque será realizado
+     *  Valor a ser sacado
      * @return Resposta vazia com status HTTP 204 (No Content) se bem-sucedido
      */
-    @PostMapping("/sacar/{id}")
-    public  ResponseEntity<Void>  sacar (@PathVariable Long id,@RequestParam double valor ){
-        Conta conta = service.buscarPorId(id);
-        service.sacar(conta,valor);
-        return ResponseEntity.noContent().build();
-    }
-    @PostMapping("/transferir")
-    public ResponseEntity<Void> transferir(@RequestBody @Validated TransferenciaDTO transferenciaDTO){
-        transferencaService.transferir(transferenciaDTO);
+    @PostMapping("/sacar")
+    public ResponseEntity<Void> sacar(@RequestBody @Valid SaqueRequestDTO requestDTO) {
+        service.sacar(requestDTO);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/transferir")
+    public ResponseEntity<Void> transferir(@RequestBody @Valid TransferenciaRequestDTO requestDTO) {
+        service.transferir(requestDTO);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{id}")
     public  ResponseEntity<Conta> buscarPorId(@PathVariable  Long id){
         Conta conta = service.buscarPorId(id);
@@ -64,5 +69,11 @@ public class ContaController {
     public  ResponseEntity<List<Conta>> listarACcontas(){
         List<Conta> contas = service.listarContas();
         return  ResponseEntity.ok(contas);
+    }
+
+    @DeleteMapping("/{contaId}")
+    public ResponseEntity<Void> excluirConta(@PathVariable Long contaId) {
+        service.excluirConta(contaId);
+        return ResponseEntity.noContent().build();
     }
 }

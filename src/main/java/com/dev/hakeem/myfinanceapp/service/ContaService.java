@@ -2,6 +2,9 @@ package com.dev.hakeem.myfinanceapp.service;
 
 import com.dev.hakeem.myfinanceapp.dto.ContaRequestDTO;
 import com.dev.hakeem.myfinanceapp.dto.TransferenciaDTO;
+import com.dev.hakeem.myfinanceapp.dto.contadto.DepositoRequestDTO;
+import com.dev.hakeem.myfinanceapp.dto.contadto.SaqueRequestDTO;
+import com.dev.hakeem.myfinanceapp.dto.contadto.TransferenciaRequestDTO;
 import com.dev.hakeem.myfinanceapp.entity.Conta;
 import com.dev.hakeem.myfinanceapp.repository.ContaRepository;
 import jakarta.validation.Valid;
@@ -58,9 +61,9 @@ public class ContaService {
      * @param requestDTO Os dados do depósito, incluindo o ID da conta e o valor a ser depositado.
      * @return A conta atualizada após o depósito.
      */
-    public Conta depositar(ContaRequestDTO requestDTO) {
+    public Conta depositar(DepositoRequestDTO requestDTO) {
         // Busca a conta pelo ID
-        Conta conta = repository.findById(requestDTO.getId())
+        Conta conta = repository.findById(requestDTO.getContaId())
                 .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
 
         // Realiza o depósito
@@ -73,26 +76,31 @@ public class ContaService {
     /**
      * Saca um valor da conta especificada e atualiza no banco de dados.
      *
-     * @param conta Conta da qual o saque será realizado
-     * @param valor Valor a ser sacado
+     *  Conta da qual o saque será realizado
+     *  Valor a ser sacado
      * @throws IllegalArgumentException Se o valor do saque for negativo ou maior que o saldo disponível
      */
-    public void sacar(Conta conta, double valor) {
+    public void sacar(SaqueRequestDTO requestDTO) {
+        // Busca a conta pelo ID
+        Conta conta = repository.findById(requestDTO.getContaId())
+                .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
+
         // Validação do valor do saque
-        if (valor <= 0) {
+        if (requestDTO.getValor() <= 0) {
             throw new IllegalArgumentException("Valor do saque deve ser maior que zero");
         }
-        if (valor > conta.getSaldoInicial()) {
+        if (requestDTO.getValor() > conta.getSaldoInicial()) {
             throw new IllegalArgumentException("Saldo insuficiente para realizar o saque");
         }
 
         // Realiza o saque
-        double novoSaldo = conta.getSaldoInicial() - valor;
+        double novoSaldo = conta.getSaldoInicial() - requestDTO.getValor();
         conta.setSaldoInicial(novoSaldo);
 
         // Atualiza a conta no banco de dados usando o repositório
         repository.save(conta);
     }
+
 
     public Conta buscarPorId(Long id) {
         return repository.findById(id)
@@ -149,21 +157,30 @@ public class ContaService {
     /**
      * Transfere fundos de uma conta para outra.
      *
-     * @param contaOrigem Conta de origem
-     * @param contaDestino Conta de destino
-     * @param valor Valor a ser transferido
+     *  Conta de origem
+     *  Conta de destino
+     *  Valor a ser transferido
      * @throws IllegalArgumentException Se o valor da transferência for inválido ou saldo insuficiente
      */
-    public void transferir(Conta contaOrigem, Conta contaDestino, double valor) {
-        TransferenciaDTO transferenciaDTO = new TransferenciaDTO();
-        transferenciaDTO.setOrigem(contaOrigem);
-        transferenciaDTO.setDestino(contaDestino);
-        transferenciaDTO.setValor(valor);
-        transferenciaDTO.setData(LocalDate.now()); // ou outra lógica para definir a data
+    public void transferir(TransferenciaRequestDTO requestDTO) {
+        Conta contaOrigem = repository.findById(requestDTO.getContaOrigemId())
+                .orElseThrow(() -> new RuntimeException("Conta de origem não encontrada"));
 
-        transferencaService.transferir(transferenciaDTO);
+        Conta contaDestino = repository.findById(requestDTO.getContaDestinoId())
+                .orElseThrow(() -> new RuntimeException("Conta de destino não encontrada"));
+
+        if (requestDTO.getValor() <= 0) {
+            throw new IllegalArgumentException("Valor da transferência deve ser maior que zero");
+        }
+        if (requestDTO.getValor() > contaOrigem.getSaldoInicial()) {
+            throw new IllegalArgumentException("Saldo insuficiente na conta de origem para realizar a transferência");
+        }
+
+        contaOrigem.setSaldoInicial(contaOrigem.getSaldoInicial() - requestDTO.getValor());
+        contaDestino.setSaldoInicial(contaDestino.getSaldoInicial() + requestDTO.getValor());
+
+        repository.save(contaOrigem);
+        repository.save(contaDestino);
     }
-
-
 
 }
