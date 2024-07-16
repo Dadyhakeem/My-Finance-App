@@ -1,11 +1,10 @@
 package com.dev.hakeem.myfinanceapp.web.controller;
 
-import com.dev.hakeem.myfinanceapp.dto.CartaoDTO;
 import com.dev.hakeem.myfinanceapp.dto.DespesaDTO;
-import com.dev.hakeem.myfinanceapp.entity.Cartoes;
-import com.dev.hakeem.myfinanceapp.repository.DespesaRepository;
+import com.dev.hakeem.myfinanceapp.dto.DespesaDecartaoDTO;
+import com.dev.hakeem.myfinanceapp.dto.cartaodto.AdicionarCartaoDTO;
+import com.dev.hakeem.myfinanceapp.dto.cartaodto.UpdateCartaoDTO;
 import com.dev.hakeem.myfinanceapp.service.CartaoService;
-import com.dev.hakeem.myfinanceapp.service.DespesaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,48 +12,51 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/cartoes")
+@RequestMapping("/api/v1/cartoes")
 public class CartaoController {
+
+    private final CartaoService service;
+
     @Autowired
-    private CartaoService service;
+    public CartaoController(CartaoService service) {
+        this.service = service;
+    }
 
     @PostMapping
-    public ResponseEntity<CartaoDTO> adicionarCartao(@RequestBody CartaoDTO cartaoDTO){
-        CartaoDTO novoCartao = service.adicionarCartao(cartaoDTO);
-        return  ResponseEntity.ok(novoCartao);
+    public ResponseEntity<AdicionarCartaoDTO> adicionarCartao(@RequestBody AdicionarCartaoDTO adicionarCartaoDTO) {
+        AdicionarCartaoDTO novoCartao = service.adicionarCartao(adicionarCartaoDTO);
+        return ResponseEntity.ok().body(novoCartao);
     }
-    @PutMapping("/{id}")
-    public ResponseEntity<CartaoDTO> atualizarcartao(@PathVariable Long id, @RequestBody CartaoDTO cartaoDTO){
-        cartaoDTO.setId(id);
-        CartaoDTO cartaoAtualizado = service.atualizarCartao(cartaoDTO);
-        return ResponseEntity.ok(cartaoAtualizado);
 
+    @PutMapping("/{id}")
+    public ResponseEntity<UpdateCartaoDTO> atualizarCartao(@PathVariable Long id, @RequestBody UpdateCartaoDTO cartaoDTO) {
+        cartaoDTO.setId(id);
+        UpdateCartaoDTO cartaoAtualizado = service.atualizarCartao(cartaoDTO);
+        return ResponseEntity.ok(cartaoAtualizado);
     }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<CartaoDTO> excluirCartao(@PathVariable Long id){
+    public ResponseEntity<Void> excluirCartao(@PathVariable Long id) {
         service.excluirCartao(id);
-        return  ResponseEntity.noContent().build();
+        return ResponseEntity.noContent().build();
     }
-    @PostMapping("/{id}/despesas")
-    public ResponseEntity<DespesaDTO> adicionarDespesa(@PathVariable Long id , @RequestBody DespesaDTO despesaDTO){
-        despesaDTO.setCartao_id(id);
-        DespesaDTO novoDespesa = service.adicionarDespesa(despesaDTO);
-        return ResponseEntity.ok(novoDespesa);
+
+    @PostMapping("{id}/despesas/adicionar")
+    public ResponseEntity<DespesaDTO> adicionarDespesa(@RequestBody DespesaDecartaoDTO despesaDTO) {
+        DespesaDTO despesa = service.adicionarDespesa(despesaDTO);
+        return ResponseEntity.ok(despesa);
     }
-    // Endpoint para buscar um cartão pelo ID
+
     @GetMapping
-    public  ResponseEntity<List<CartaoDTO>> listarCartoes(){
-        List<CartaoDTO> cartoes = service.findByAll();
+    public ResponseEntity<List<UpdateCartaoDTO>> listarCartoes() {
+        List<UpdateCartaoDTO> cartoes = service.findAll();
         return ResponseEntity.ok(cartoes);
     }
-    // Endpoint para buscar um cartão pelo ID
+
     @GetMapping("/{id}")
-    public  ResponseEntity<CartaoDTO> buscarCartaoPorId(@PathVariable Long id){
-        CartaoDTO cartaoDTO = service.findById(id)
-                .orElseThrow(()-> new RuntimeException("Cartao nao encontrada"));
+    public ResponseEntity<UpdateCartaoDTO> buscarCartaoPorId(@PathVariable Long id) {
+        UpdateCartaoDTO cartaoDTO = service.findById(id)
+                .orElseThrow(() -> new RuntimeException("Cartão não encontrado"));
         return ResponseEntity.ok(cartaoDTO);
     }
-
-
-
 }

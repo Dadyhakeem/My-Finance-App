@@ -15,7 +15,7 @@ import lombok.Setter;
 @Setter
 public class DepositoRequestDTO {
     @NotNull(message = "Conta ID não deve ser nulo")
-    private Long contaId;
+    private Long id;
 
     @NotNull(message = "Valor não deve ser nulo")
     @Positive(message = "Valor deve ser positivo")

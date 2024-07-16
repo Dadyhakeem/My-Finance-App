@@ -1,6 +1,8 @@
-package com.dev.hakeem.myfinanceapp.dto;
+package com.dev.hakeem.myfinanceapp.dto.cartaodto;
 
 import com.dev.hakeem.myfinanceapp.entity.Conta;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -13,17 +15,18 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Setter
-public class CartaoDTO {
-    @NotNull(message = "nao deve ser nula")
+public class UpdateCartaoDTO {
+
+
+    private Long id;
     @FutureOrPresent(message = "A data deve ser no presente ou no futuro")
     private LocalDate vencimento;
-    @NotNull(message = "nao deve ser nula")
     @FutureOrPresent(message = "A data deve ser no presente ou no futuro")
     private  LocalDate fechamento;
     @NotNull(message = "nao deve ser nulo")
     private  double limite;
-    @NotNull(message = "Nao deve ser nula")
+    @ManyToOne
+    @JoinColumn(name = "conta_id", nullable = false)
     private Conta conta;
-    private Long id;
-    private Long conta_id;
+
 }

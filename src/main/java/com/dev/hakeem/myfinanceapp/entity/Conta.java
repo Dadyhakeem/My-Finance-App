@@ -8,34 +8,38 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
-
-
 @AllArgsConstructor
-@NoArgsConstructor @Getter @Setter
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 @Table(name = "tb_conta")
 public class Conta implements Serializable {
-    private static final long serialVersionUID= 1L;
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "instituicao_Financeira",nullable = false,length = 50)
-    private  String instituicaoFinanceira;
+    @Column(name = "instituicao_Financeira", nullable = false, length = 50)
+    private String instituicaoFinanceira;
 
-    @Column(name = "saldo_inicial",nullable = true,scale = 2)
+    @Column(name = "saldo_inicial", nullable = true, scale = 2)
     private double saldoInicial;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "tipo_conta",nullable = false)
+    @Column(name = "tipo_conta", nullable = false)
     private TipoConta tipoconta;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private  User user;
+
+    private User user;
+
 
 
     @Override
@@ -48,6 +52,6 @@ public class Conta implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(id);
+        return Objects.hash(id);
     }
 }

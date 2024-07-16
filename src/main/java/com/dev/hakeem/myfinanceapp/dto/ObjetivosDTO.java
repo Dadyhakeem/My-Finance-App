@@ -1,12 +1,13 @@
 package com.dev.hakeem.myfinanceapp.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.antlr.v4.runtime.misc.NotNull;
+
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -26,7 +27,7 @@ public class ObjetivosDTO {
     @PastOrPresent(message = "A data deve ser o passado ou no presente")
     private LocalDate data_alvo;
 
-    @NotBlank(message = "Nao deve ser nula")
+    @NotNull(message = "Nao pode ser null")
     private double meta;
 
 

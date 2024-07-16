@@ -1,7 +1,9 @@
 package com.dev.hakeem.myfinanceapp.service;
 
-import com.dev.hakeem.myfinanceapp.dto.CartaoDTO;
 import com.dev.hakeem.myfinanceapp.dto.DespesaDTO;
+import com.dev.hakeem.myfinanceapp.dto.DespesaDecartaoDTO;
+import com.dev.hakeem.myfinanceapp.dto.cartaodto.AdicionarCartaoDTO;
+import com.dev.hakeem.myfinanceapp.dto.cartaodto.UpdateCartaoDTO;
 import com.dev.hakeem.myfinanceapp.entity.Cartoes;
 import com.dev.hakeem.myfinanceapp.entity.Conta;
 import com.dev.hakeem.myfinanceapp.entity.Despesas;
@@ -10,6 +12,7 @@ import com.dev.hakeem.myfinanceapp.repository.ContaRepository;
 import com.dev.hakeem.myfinanceapp.repository.DespesaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,139 +20,102 @@ import java.util.stream.Collectors;
 
 @Service
 public class CartaoService {
-    @Autowired
-    private  final CartaoRepository repository;
-    @Autowired
-    private  final ContaRepository contaRepository;
-    @Autowired
-    private  final DespesaRepository despesaRepository;
 
+    private final CartaoRepository repository;
+    private final ContaRepository contaRepository;
+    private final DespesaRepository despesaRepository;
+
+    @Autowired
     public CartaoService(CartaoRepository repository, ContaRepository contaRepository, DespesaRepository despesaRepository) {
         this.repository = repository;
         this.contaRepository = contaRepository;
         this.despesaRepository = despesaRepository;
     }
 
-    /**
-     * Adiciona um novo cartão.
-     *
-     * @param cartaoDTO os dados do cartão a ser adicionado
-     * @return o cartão adicionado
-     */
+    public AdicionarCartaoDTO adicionarCartao(AdicionarCartaoDTO adicionarCartaoDTO) {
+        Conta conta = contaRepository.findById(adicionarCartaoDTO.getContaid())
+                .orElseThrow(() -> new IllegalArgumentException("Conta não encontrada"));
 
-
-    public CartaoDTO adicionarCartao(CartaoDTO cartaoDTO){
         Cartoes cartao = new Cartoes();
-
-        // busca a conta pelo id
-
-        Conta conta = contaRepository.findById(cartaoDTO.getConta_id())
-                        .orElseThrow(() -> new RuntimeException("Conta nao encontrada"));
-
-        cartao.setConta(cartaoDTO.getConta());
-        cartao.setLimite(cartaoDTO.getLimite());
-        cartao.setFechamento(cartaoDTO.getFechamento());
-        cartao.setVencimento(cartaoDTO.getVencimento());
+        cartao.setConta(conta);
+        cartao.setLimite(adicionarCartaoDTO.getLimite());
+        cartao.setFechamento(adicionarCartaoDTO.getFechamento());
+        cartao.setVencimento(adicionarCartaoDTO.getVencimento());
 
         Cartoes savedCartao = repository.save(cartao);
 
-
-        return mapToDTO(savedCartao);
-
+        return new AdicionarCartaoDTO(
+                savedCartao.getId(),
+                savedCartao.getFechamento(),
+                savedCartao.getLimite(),
+                savedCartao.getVencimento(),
+                savedCartao.getConta().getId()
+        );
     }
 
-    /**
-     * Atualiza um cartão existente.
-     *
-     * @param cartaoDTO os dados do cartão a ser atualizado
-     * @return o cartão atualizado
-     */
+    public UpdateCartaoDTO atualizarCartao(UpdateCartaoDTO cartaoDTO) {
+        Optional<Cartoes> cartaoExistente = repository.findById(cartaoDTO.getId());
+        if (cartaoExistente.isPresent()) {
+            Cartoes cartao = cartaoExistente.get();
+            cartao.setLimite(cartaoDTO.getLimite());
+            cartao.setFechamento(cartaoDTO.getFechamento());
+            cartao.setVencimento(cartaoDTO.getVencimento());
 
-    public CartaoDTO atualizarCartao(CartaoDTO cartaoDTO){
-        Cartoes cartoes = repository.findById(cartaoDTO.getId())
-                .orElseThrow(()-> new RuntimeException("Cartao nao encontrada"));
-
-        Conta conta = contaRepository.findById(cartaoDTO.getConta_id())
-                .orElseThrow(() -> new RuntimeException("Conta nao encontrada"));
-
-
-
-          cartoes.setLimite(cartaoDTO.getLimite());
-          cartoes.setFechamento(cartaoDTO.getFechamento());
-          cartoes.setVencimento(cartaoDTO.getVencimento());
-          Cartoes updateCartao = repository.save(cartoes);
-
-          return mapToDTO(updateCartao);
+            Cartoes updatedCartao = repository.save(cartao);
+            return mapToDTO(updatedCartao);
+        } else {
+            throw new IllegalArgumentException("Cartão não encontrado");
+        }
     }
 
-    /**
-     * Exclui um cartão pelo ID.
-     *
-     * @param id o ID do cartão a ser excluído
-     */
-
-    public  void excluirCartao(Long id){
+    public void excluirCartao(Long id) {
         Cartoes cartao = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Cartao nao encontrada"));
+                .orElseThrow(() -> new RuntimeException("Cartão não encontrado"));
         repository.delete(cartao);
     }
 
-    /**
-     * Adiciona uma despesa a um cartão.
-     *
-     * @param despesaDTO os dados da despesa a ser adicionada
-     * @return a despesa adicionada
-     */
+    public DespesaDTO adicionarDespesa(DespesaDecartaoDTO despesaDTO) {
+        Cartoes cartao = repository.findById(despesaDTO.getDespesa_id())
+                .orElseThrow(() -> new RuntimeException("Cartão não encontrado"));
 
-    public  DespesaDTO adicionarDespesa(DespesaDTO despesaDTO){
-        Cartoes cartoes = repository.findById(despesaDTO.getId())
-                .orElseThrow(()-> new RuntimeException("Cartao nao encontrado"));
+        Despesas despesa = new Despesas();
+        despesa.setId(despesaDTO.getDespesa_id());
+        despesa.setDescriao(despesaDTO.getDescricao());
+        despesa.setValor(despesaDTO.getValor());
+        despesa.setData(despesaDTO.getData());
+        despesa.setCategoriaDespesas(despesaDTO.getCategoriaDespesas());
 
-        Despesas despesas = new Despesas();
-        despesas.setConta(despesaDTO.getConta());
-        despesas.setDescriao(despesaDTO.getDescricao());
-        despesas.setValor(despesaDTO.getValor());
-        despesas.setData(despesaDTO.getData());
-        despesas.setCategoriaDespesas(despesaDTO.getCategorias());
-
-        Despesas savedDespesas = despesaRepository.save(despesas);
-        return  mapToDespesaDTO(savedDespesas);
+        Despesas savedDespesa = despesaRepository.save(despesa);
+        return mapToDespesaDTO(savedDespesa);
     }
 
-    public  CartaoDTO mapToDTO(Cartoes cartoes){
-        CartaoDTO cartaoDTO =  new CartaoDTO();
-
-        cartaoDTO.setId(cartoes.getId());
-        cartaoDTO.setConta_id(cartoes.getConta().getId());
-        cartaoDTO.setLimite(cartoes.getLimite());
-        cartaoDTO.setFechamento(cartoes.getFechamento());
-        cartaoDTO.setVencimento(cartoes.getVencimento());
-        return  cartaoDTO;
+    public UpdateCartaoDTO mapToDTO(Cartoes cartao) {
+        UpdateCartaoDTO cartaoDTO = new UpdateCartaoDTO();
+        cartaoDTO.setId(cartao.getId());
+        cartaoDTO.setLimite(cartao.getLimite());
+        cartaoDTO.setFechamento(cartao.getFechamento());
+        cartaoDTO.setVencimento(cartao.getVencimento());
+        cartaoDTO.setConta(cartao.getConta());
+        return cartaoDTO;
     }
 
-    public DespesaDTO mapToDespesaDTO(Despesas despesas){
+    public DespesaDTO mapToDespesaDTO(Despesas despesa) {
         DespesaDTO despesaDTO = new DespesaDTO();
-
-        despesaDTO.setId(despesas.getId());
-        despesaDTO.setCartao_id(despesas.getConta_id().getId());
-        despesaDTO.setDescricao(despesas.getDescriao());
-        despesaDTO.setValor(despesas.getValor());
-        despesaDTO.setData(despesas.getData());
-        despesaDTO.setCategorias(despesas.getCategoriaDespesas());
-
+        despesaDTO.setId(despesa.getId());
+        despesaDTO.setDescricao(despesa.getDescriao());
+        despesaDTO.setValor(despesa.getValor());
+        despesaDTO.setData(despesa.getData());
+        despesaDTO.setCategorias(despesa.getCategoriaDespesas());
         return despesaDTO;
     }
 
-
-
-
-    public List<CartaoDTO> findByAll() {
+    public List<UpdateCartaoDTO> findAll() {
         return repository.findAll().stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
-    public Optional<CartaoDTO> findById(Long id) {
+    public Optional<UpdateCartaoDTO> findById(Long id) {
         return repository.findById(id)
                 .map(this::mapToDTO);
     }

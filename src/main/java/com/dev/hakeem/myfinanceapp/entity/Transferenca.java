@@ -28,16 +28,16 @@ public class Transferenca implements Serializable {
     private LocalDate data;
 
 
-    @Column(name = "conta_origem")
-    private Conta origem;
+    @ManyToOne
+    @JoinColumn(name = "conta_origem_id")
+    private Conta contaOrigem;
 
-
-    @Column(name = "conta_destino")
-    private  Conta destino;
 
     @ManyToOne
-    @JoinColumn(name = "conta_id",referencedColumnName = "id")
-    private Conta contaId;
+    @JoinColumn(name = "conta_destino_id")
+    private Conta contaDestino;
+
+
 
 
     @Override

@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.List;
 
 @RestController
-@RequestMapping("/despesas/cartoes")
+@RequestMapping("/api/despesasCartoes")
 public class DespesaCartaoController  {
 
     private final DespesaCartaoService service;

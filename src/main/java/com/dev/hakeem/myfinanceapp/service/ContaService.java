@@ -6,7 +6,9 @@ import com.dev.hakeem.myfinanceapp.dto.contadto.DepositoRequestDTO;
 import com.dev.hakeem.myfinanceapp.dto.contadto.SaqueRequestDTO;
 import com.dev.hakeem.myfinanceapp.dto.contadto.TransferenciaRequestDTO;
 import com.dev.hakeem.myfinanceapp.entity.Conta;
+import com.dev.hakeem.myfinanceapp.entity.User;
 import com.dev.hakeem.myfinanceapp.repository.ContaRepository;
+import com.dev.hakeem.myfinanceapp.repository.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,11 +21,13 @@ public class ContaService {
 
     private final ContaRepository repository;
     private final TransferencaService transferencaService;
+    private  final UserRepository userRepository;
 
     @Autowired
-    public ContaService(ContaRepository repository, TransferencaService transferencaService) {
+    public ContaService(ContaRepository repository, TransferencaService transferencaService, UserRepository userRepository) {
         this.repository = repository;
         this.transferencaService = transferencaService;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -34,25 +38,15 @@ public class ContaService {
      * @throws IllegalArgumentException Se os dados fornecidos forem inválidos
      */
     public Conta createConta(@Valid ContaRequestDTO requestDTO) {
-        // Validação dos dados do DTO
-        if (requestDTO.getTipoConta() == null) {
-            throw new IllegalArgumentException("Tipo de conta não pode ser nulo");
-        }
-        if (requestDTO.getInstituicaoFinanceira() == null || requestDTO.getInstituicaoFinanceira().isEmpty()) {
-            throw new IllegalArgumentException("Instituição financeira não pode ser nula ou vazia");
-        }
-        if (requestDTO.getSaldoInicial() < 0) {
-            throw new IllegalArgumentException("Saldo inicial não pode ser negativo");
-        }
+        User user = userRepository.findById(requestDTO.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("Usuário não encontrado"));
+        Conta novaConta = new Conta();
+        novaConta.setTipoconta(requestDTO.getTipoConta()); // Converte TipoConta para String se necessário
+        novaConta.setInstituicaoFinanceira(requestDTO.getInstituicaoFinanceira());
+        novaConta.setSaldoInicial(requestDTO.getSaldoInicial());
+        novaConta.setUser(user);
 
-        // Criação da conta
-        Conta newConta = new Conta();
-        newConta.setTipoconta(requestDTO.getTipoConta());
-        newConta.setInstituicaoFinanceira(requestDTO.getInstituicaoFinanceira());
-        newConta.setSaldoInicial(requestDTO.getSaldoInicial());
-
-        // Salva a conta no banco de dados usando o repositório
-        return repository.save(newConta);
+        return repository.save(novaConta);
     }
 
     /**
@@ -63,7 +57,7 @@ public class ContaService {
      */
     public Conta depositar(DepositoRequestDTO requestDTO) {
         // Busca a conta pelo ID
-        Conta conta = repository.findById(requestDTO.getContaId())
+        Conta conta = repository.findById(requestDTO.getId())
                 .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
 
         // Realiza o depósito

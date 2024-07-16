@@ -1,85 +1,82 @@
 package com.dev.hakeem.myfinanceapp.service;
 
 import com.dev.hakeem.myfinanceapp.dto.DespesaDTO;
+import com.dev.hakeem.myfinanceapp.entity.Cartoes;
 import com.dev.hakeem.myfinanceapp.entity.Despesas;
+import com.dev.hakeem.myfinanceapp.repository.CartaoRepository;
 import com.dev.hakeem.myfinanceapp.repository.DespesaRepository;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DespesaService {
+
+    private final DespesaRepository despesaRepository;
+    private final CartaoRepository cartaoRepository;
+
     @Autowired
-    private final DespesaRepository repository;
-
-    public DespesaService(DespesaRepository repository) {
-        this.repository = repository;
-    }
-    /**
-     * Adiciona uma nova despesa ao repositório.
-     *
-     * @param despesaDTO o DTO contendo as informações da despesa a ser adicionada
-     * @return a despesa adicionada
-     * @throws IllegalArgumentException se os dados da despesa forem inválidos
-     */
-
-    public Despesas adicionarDespesas( @Valid DespesaDTO despesaDTO){
-        validarDespesaDTO(despesaDTO);
-        Despesas despesas = new Despesas();
-
-        despesas.setValor(despesaDTO.getValor());
-        despesas.setData(despesaDTO.getData());
-        despesas.setDescriao(despesaDTO.getDescricao());
-        despesas.setCategoriaDespesas(despesaDTO.getCategorias());
-        despesas.setConta(despesaDTO.getConta());
-
-        return repository.save(despesas);
+    public DespesaService(DespesaRepository despesaRepository, CartaoRepository cartaoRepository) {
+        this.despesaRepository = despesaRepository;
+        this.cartaoRepository = cartaoRepository;
     }
 
-    /**
-     * Remove uma despesa do repositório pelo seu ID.
-     *
-     * @param id o ID da despesa a ser removida
-     * @throws RuntimeException se a despesa não for encontrada
-     */
+    public DespesaDTO adicionarDespesa(DespesaDTO despesaDTO) {
+        Cartoes cartoes = cartaoRepository.findById(despesaDTO.getContaid().getId())
+                .orElseThrow(() -> new RuntimeException("Cartão não encontrado"));
 
-    public  void removerDespesa(Long id ){
-        Optional<Despesas> despesas = repository.findById(id);
-           if (!despesas.isPresent()){
-               throw  new RuntimeException("Despesa nao encontrada");
-           }
-           repository.delete(despesas.get());
+        Despesas despesa = new Despesas();
+        despesa.setDescriao(despesaDTO.getDescricao());
+        despesa.setValor(despesaDTO.getValor());
+        despesa.setData(despesaDTO.getData());
+        despesa.setCategoriaDespesas(despesaDTO.getCategorias());
+        despesa.setContaid(despesaDTO.getContaid());
+
+        Despesas savedDespesa = despesaRepository.save(despesa);
+        return mapToDespesaDTO(savedDespesa);
     }
 
-    /**
-     * Valida os dados do DTO da despesa.
-     *
-     * @param despesaDTO o DTO a ser validado
-     * @throws IllegalArgumentException se algum dado do DTO for inválido
-     */
+    public DespesaDTO atualizarDespesa(Long id, DespesaDTO despesaDTO) {
+        Despesas despesaExistente = despesaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Despesa não encontrada"));
 
-    private void validarDespesaDTO(DespesaDTO despesaDTO) {
-        if (despesaDTO == null) {
-            throw new IllegalArgumentException("DespesaDTO não pode ser nulo");
-        }
-        if (!StringUtils.hasText(despesaDTO.getDescricao())) {
-            throw new IllegalArgumentException("Descrição não pode ser vazia");
-        }
-        if (despesaDTO.getValor() <= 0) {
-            throw new IllegalArgumentException("Valor deve ser maior que zero");
-        }
-        if (despesaDTO.getData() == null) {
-            throw new IllegalArgumentException("Data não pode ser nula");
-        }
-        if (despesaDTO.getConta() == null) {
-            throw new IllegalArgumentException("Conta não pode ser nula");
-        }
-        if (despesaDTO.getCategorias() == null) {
-            throw new IllegalArgumentException("Categoria não pode ser nula");
-        }
+        despesaExistente.setDescriao(despesaDTO.getDescricao());
+        despesaExistente.setValor(despesaDTO.getValor());
+        despesaExistente.setData(despesaDTO.getData());
+        despesaExistente.setCategoriaDespesas(despesaDTO.getCategorias());
+
+        Despesas updatedDespesa = despesaRepository.save(despesaExistente);
+        return mapToDespesaDTO(updatedDespesa);
     }
 
+    public void excluirDespesa(Long id) {
+        Despesas despesa = despesaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Despesa não encontrada"));
+        despesaRepository.delete(despesa);
+    }
+
+    public DespesaDTO buscarDespesaPorId(Long id) {
+        Despesas despesa = despesaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Despesa não encontrada"));
+        return mapToDespesaDTO(despesa);
+    }
+
+    public List<DespesaDTO> buscarTodasDespesas() {
+        return despesaRepository.findAll().stream()
+                .map(this::mapToDespesaDTO)
+                .collect(Collectors.toList());
+    }
+
+    private DespesaDTO mapToDespesaDTO(Despesas despesa) {
+        DespesaDTO despesaDTO = new DespesaDTO();
+        despesaDTO.setId(despesa.getId());
+        despesaDTO.setDescricao(despesa.getDescriao());
+        despesaDTO.setValor(despesa.getValor());
+        despesaDTO.setData(despesa.getData());
+        despesaDTO.setCategorias(despesa.getCategoriaDespesas());
+        despesaDTO.setContaid(despesa.getContaid());
+        return despesaDTO;
+    }
 }

@@ -36,16 +36,12 @@ public class DespesaCartao implements Serializable {
     private CategoriaDespesas categoriaDespesas;
 
      @ManyToOne
-    @JoinColumn(name = "cartao",nullable = false)
-    private  Cartoes cartoes;
-
-    @ManyToOne
-    @JoinColumn(name = "cartao_id")
-    private Cartoes cartaoId;
+    @JoinColumn(name = "cartao_id",nullable = false)
+    private  Cartoes cartao;
 
     @ManyToOne
     @JoinColumn(name = "despesa_id")
-    private  Despesas despesas_id;
+    private  Despesas despesas;
 
 
     @Override

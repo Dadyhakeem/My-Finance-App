@@ -60,10 +60,7 @@ public class TransferencaService {
         contaRepository.save(contaOrigem);
         contaRepository.save(contaDestino);
 
-        // Simulação da transferência com sucesso
-        System.out.println("Transferência realizada com sucesso! Transferido " + transferenciaDTO.getValor() +
-                " de " + contaOrigem.getUser().getName() + " para " + contaDestino.getUser().getName() +
-                " na data " + transferenciaDTO.getData());
+        //
     }
 
 

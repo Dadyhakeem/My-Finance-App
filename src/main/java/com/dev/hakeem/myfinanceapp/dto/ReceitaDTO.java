@@ -23,11 +23,11 @@ public class ReceitaDTO {
     private LocalDate data_receita;
     @NotNull
     private  String descricao;
-    @NotBlank
+    @NotNull
     private double valor;
-    @NotBlank
+    @NotNull
     private CategoriaReceitas categoriaReceitas;
-    @NotBlank
+    @NotNull(message = "Conta não pode ser nula")
     private Conta conta;
-    private  Conta conta_id;
+
 }

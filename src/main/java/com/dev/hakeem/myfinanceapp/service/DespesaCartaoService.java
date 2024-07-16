@@ -34,7 +34,7 @@ public class DespesaCartaoService  {
         despesaCartao.setData(dto.getData());
         despesaCartao.setDescricao(dto.getDescricao());
         despesaCartao.setCategoriaDespesas(dto.getCategoriaDespesas());
-        despesaCartao.setCartoes(dto.getCartoes());
+        despesaCartao.setId(dto.getDespesa_id());
 
         return repository.save(despesaCartao);
     }
@@ -67,7 +67,7 @@ public class DespesaCartaoService  {
         despesaCartao.setData(dto.getData());
         despesaCartao.setDescricao(dto.getDescricao());
         despesaCartao.setCategoriaDespesas(dto.getCategoriaDespesas());
-        despesaCartao.setCartoes(dto.getCartoes());
+        despesaCartao.setId(dto.getId());
 
         return repository.save(despesaCartao);
     }

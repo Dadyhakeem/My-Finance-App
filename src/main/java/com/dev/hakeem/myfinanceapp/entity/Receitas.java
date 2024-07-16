@@ -30,14 +30,13 @@ public class Receitas implements Serializable {
     private  String descricao;
     @Column(name = "valor",nullable = false,scale = 2)
     private double valor;
+    @Enumerated(EnumType.STRING)
     @Column(name = "categoria")
     private CategoriaReceitas categoriaReceitas;
-
-    @Column(name = "conta",nullable = false)
-    private  Conta conta;
     @ManyToOne
-    @JoinColumn(name = "conta_id")
-    private  Conta conta_id;
+    @JoinColumn(name = "conta_id",nullable = false)
+    private  Conta conta;
+
 
     @Override
     public boolean equals(Object o) {

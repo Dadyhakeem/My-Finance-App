@@ -31,9 +31,6 @@ public class Despesas implements Serializable {
     private double valor;
 
 
-    @Column(name = "conta")
-    private  Conta conta;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "categorias")
     private CategoriaDespesas categoriaDespesas;
@@ -43,7 +40,7 @@ public class Despesas implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "conta_id")
-    private Conta conta_id;
+    private Conta contaid;
 
 
 

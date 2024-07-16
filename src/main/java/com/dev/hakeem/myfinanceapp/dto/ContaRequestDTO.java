@@ -17,11 +17,16 @@ import lombok.Setter;
 @Setter
 public class ContaRequestDTO {
     private Long id;
-    private User user_id;
-    @NotNull(message = "nao deve ser nula")
+
+    @NotNull(message = "O user_id não deve ser nulo")
+    private Long userId;
+
+    @NotNull(message = "O tipo de conta não deve ser nulo")
     private TipoConta tipoConta;
-    @NotNull(message = "nao deve ser nula")
+
+    @NotNull(message = "A instituição financeira não deve ser nula")
     private String instituicaoFinanceira;
+
     private double saldoInicial;
-    private  double valor;
+
 }
