@@ -15,37 +15,47 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository repository;
+    private final UserRepository repository;
 
-    // Método auxiliar para mapear User para CreateUserDTO
-    @Transactional
-    public CreateUserDTO mapToDTO(User user) {
-        CreateUserDTO userDTO = new CreateUserDTO();
-        userDTO.setId(user.getId());
-        userDTO.setName(user.getName());
-        userDTO.setEmail(user.getEmail());
-        userDTO.setRole(user.getRole());
-        return userDTO;
+    @Autowired
+    public UserService(UserRepository repository) {
+        this.repository = repository;
     }
 
+    // Método auxiliar para mapear User para CreateUserDTO
+    @Transactional(readOnly = true)
+    public CreateUserDTO mapToDTO(User user) {
+        return new CreateUserDTO(
+                user.getName(),
+                user.getEmail(),
+                user.getSenha(),
+                user.getRole(),
+                user.getId()
+        );
+    }
+
+    @Transactional(readOnly = true)
     public Optional<User> findById(Long id) {
         return repository.findById(id);
     }
 
+    @Transactional(readOnly = true)
     public List<CreateUserDTO> findAll() {
         return repository.findAll().stream()
                 .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void deleteUser(Long id) {
         repository.deleteById(id);
     }
 
+    @Transactional(readOnly = true)
     public boolean existsUser(Long id) {
         return repository.existsById(id);
     }
+
     @Transactional
     public User cadastrar(CreateUserDTO createUserDTO) {
         User user = new User();
@@ -53,17 +63,21 @@ public class UserService {
         user.setEmail(createUserDTO.getEmail());
         user.setSenha(createUserDTO.getSenha());
         user.setRole(createUserDTO.getRole());
-        // Não é necessário setar address e dateOfBirth, pois não estão na entidade User
         return repository.save(user);
     }
-    @Transactional
+
+    @Transactional(readOnly = true)
     public Optional<User> login(String email, String senha) {
         Optional<User> obj = repository.findByEmail(email);
         if (obj.isPresent()) {
             User user = obj.get();
-            // if (passwordEncoder.matches(senha, user.getSenha())) {  // Codificar futuramente
+            // Aqui você poderia adicionar a lógica de verificação de senha usando passwordEncoder
+            // if (passwordEncoder.matches(senha, user.getSenha())) {
             //     return Optional.of(user);
             // }
+            if (user.getSenha().equals(senha)) {
+                return Optional.of(user);
+            }
         }
         return Optional.empty();
     }
@@ -78,12 +92,8 @@ public class UserService {
      */
     @Transactional
     public void atualizarSenha(Long id, UpdateUserDTO updateUserDTO) {
-        Optional<User> obj = repository.findById(id);
-        if (obj.isEmpty()) {
-            throw new RuntimeException("Usuário não encontrado");
-        }
-
-        User user = obj.get();
+        User user = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         // Verifica se a senha atual está correta
         if (!user.getSenha().equals(updateUserDTO.getSenha())) {
