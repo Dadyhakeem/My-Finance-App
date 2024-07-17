@@ -28,14 +28,17 @@ public class User implements Serializable {
     private Long id;
 
     @NotBlank(message = "Nome não deve estar em branco")
+    @Column(name = "name",nullable = false,length = 50)
     private String name;
 
     @NotBlank(message = "Email não deve estar em branco")
     @Email(message = "Formato do email está inválido")
+    @Column(name = "email",nullable = false,unique = true,length = 100)
     private String email;
 
     @NotBlank(message = "Senha não deve estar em branco")
     @Size(min = 6, max = 6, message = "A senha deve ter exatamente 6 caracteres")
+    @Column(name = "senha",nullable = false)
     private String senha;
 
     @Enumerated(EnumType.STRING)

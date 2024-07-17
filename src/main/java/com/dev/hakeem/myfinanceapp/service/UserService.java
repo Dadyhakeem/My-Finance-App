@@ -3,6 +3,7 @@ package com.dev.hakeem.myfinanceapp.service;
 import com.dev.hakeem.myfinanceapp.dto.userdto.CreateUserDTO;
 import com.dev.hakeem.myfinanceapp.dto.userdto.UpdateUserDTO;
 import com.dev.hakeem.myfinanceapp.entity.User;
+import com.dev.hakeem.myfinanceapp.exception.UserEmailUniqueViolationException;
 import com.dev.hakeem.myfinanceapp.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class UserService {
     public UserService(UserRepository repository) {
         this.repository = repository;
     }
+
 
     // Método auxiliar para mapear User para CreateUserDTO
     @Transactional(readOnly = true)
@@ -58,12 +60,18 @@ public class UserService {
 
     @Transactional
     public User cadastrar(CreateUserDTO createUserDTO) {
-        User user = new User();
-        user.setName(createUserDTO.getName());
-        user.setEmail(createUserDTO.getEmail());
-        user.setSenha(createUserDTO.getSenha());
-        user.setRole(createUserDTO.getRole());
-        return repository.save(user);
+        try {
+
+
+            User user = new User();
+            user.setName(createUserDTO.getName());
+            user.setEmail(createUserDTO.getEmail());
+            user.setSenha(createUserDTO.getSenha());
+            user.setRole(createUserDTO.getRole());
+            return repository.save(user);
+        }catch (org.springframework.dao.DataIntegrityViolationException ex){
+            throw  new UserEmailUniqueViolationException(String.format("Email {%s} ja cadastrado",createUserDTO.getEmail()));
+        }
     }
 
     @Transactional(readOnly = true)
