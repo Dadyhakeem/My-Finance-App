@@ -2,7 +2,9 @@ package com.dev.hakeem.myfinanceapp.entity;
 
 import com.dev.hakeem.myfinanceapp.enums.Role;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,20 +25,23 @@ public class User implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
-    @Column(name = "name",nullable = false,length = 50)
+
+    @NotBlank(message = "Nome não deve estar em branco")
     private String name;
-    @Column(name = "email",nullable = false,unique = true,length = 80)
+
+    @NotBlank(message = "Email não deve estar em branco")
+    @Email(message = "Formato do email está inválido")
     private String email;
-    @Column(name = "senha",nullable = false,length = 250)
-    @NotBlank
-    @Size(min = 6,max = 6)
+
+    @NotBlank(message = "Senha não deve estar em branco")
+    @Size(min = 6, max = 6, message = "A senha deve ter exatamente 6 caracteres")
     private String senha;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role",nullable = false,length = 23)
+    @Column(name = "role", nullable = false, length = 23)
     private Role role;
+
 
 
 

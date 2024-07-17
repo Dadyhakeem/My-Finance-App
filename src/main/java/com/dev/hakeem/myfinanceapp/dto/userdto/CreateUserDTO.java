@@ -3,6 +3,7 @@ package com.dev.hakeem.myfinanceapp.dto.userdto;
 import com.dev.hakeem.myfinanceapp.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public class CreateUserDTO {
     private String name;
 
     @NotBlank
-    @Email(message = "Formato do email está inválido", regexp = "^[a-z0-9.+-]+@[a-z0-9.-]+\\.[a-z]{2,}$")
+    @Email(message = "Formato do email está inválido")
     private String email;
 
     @NotBlank

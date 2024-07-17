@@ -2,6 +2,7 @@ package com.dev.hakeem.myfinanceapp;
 
 import com.dev.hakeem.myfinanceapp.dto.userdto.CreateUserDTO;
 import com.dev.hakeem.myfinanceapp.enums.Role;
+import com.dev.hakeem.myfinanceapp.web.controller.exception.ErroMessage;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,4 +40,49 @@ public class UserIT {
         assertThat(responseBody.getSenha()).isEqualTo("123456");
         assertThat(responseBody.getRole()).isEqualTo(Role.ROLE_ADMIN);
     }
+    @Test
+    public void createUser_ComEmailInvalidos_RetornaErroMessageStatus422() {
+        // Teste para e-mail em branco
+        ErroMessage responseBody = testClient
+                .post()
+                .uri("/api/v1/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CreateUserDTO("Frane", " ", "123456", Role.ROLE_ADMIN, null))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErroMessage.class)
+                .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getStatus()).isEqualTo(422);
+
+        // Teste para formato de e-mail inválido
+        responseBody = testClient
+                .post()
+                .uri("/api/v1/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CreateUserDTO("Frane", "frane@", "123456", Role.ROLE_ADMIN, null))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErroMessage.class)
+                .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getStatus()).isEqualTo(422);
+
+        // Teste para formato de e-mail inválido
+        responseBody = testClient
+                .post()
+                .uri("/api/v1/users")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(new CreateUserDTO("Frane", "franegmail.", "123456", Role.ROLE_ADMIN, null))
+                .exchange()
+                .expectStatus().isEqualTo(422)
+                .expectBody(ErroMessage.class)
+                .returnResult().getResponseBody();
+
+        assertThat(responseBody).isNotNull();
+        assertThat(responseBody.getStatus()).isEqualTo(422);
+    }
+
 }
